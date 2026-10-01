@@ -1,7 +1,7 @@
 package mthree.com.finalproject.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ConversionHistory {
     private int historyId;
@@ -10,7 +10,7 @@ public class ConversionHistory {
     private BigDecimal amount;
     private BigDecimal exchangeRate;
     private BigDecimal convertedAmount;
-    private LocalDate date;
+    private LocalDateTime date;
 
     public int getHistoryId() {
         return historyId;
@@ -60,11 +60,11 @@ public class ConversionHistory {
         this.convertedAmount = convertedAmount;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 }
