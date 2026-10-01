@@ -1,17 +1,17 @@
 package mthree.com.finalproject.model;
 
 public class Currency {
-    private int courseId;
+    private int currencyId;
     private String currencyCode;
     private String currencyName;
     private String currencySymbol;
 
-    public int getCourseId() {
-        return courseId;
+    public int getCurrencyId() {
+        return currencyId;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setCurrencyId(int courseId) {
+        this.currencyId = courseId;
     }
 
     public String getCurrencyCode() {
