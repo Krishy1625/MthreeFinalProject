@@ -1,4 +1,4 @@
 package mthree.com.finalproject.dao;
 
-public class ConversionHistoryDaoImpl {
+public class ConversionHistoryDaoImpl implements ConversionHistoryDao {
 }
