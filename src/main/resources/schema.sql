@@ -3,6 +3,13 @@
 --
 -- USE currencyDB;
 
+CREATE TABLE users (
+    uid INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
 CREATE TABLE currency (
     cid INT PRIMARY KEY AUTO_INCREMENT,
     currency_code VARCHAR(3) UNIQUE NOT NULL,
@@ -12,12 +19,18 @@ CREATE TABLE currency (
 
 CREATE TABLE conversion_history (
     hid INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     exchange_rate DECIMAL(10,5) NOT NULL,
     converted_amount DECIMAL(10,2) NOT NULL,
     conversion_date DATETIME NOT NULL,
+    notes VARCHAR(255),
+
+    CONSTRAINT fk_history_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(uid),
 
     CONSTRAINT fk_history_from_currency
         FOREIGN KEY (from_currency_id)
@@ -30,8 +43,13 @@ CREATE TABLE conversion_history (
 
 CREATE TABLE favourites (
     wid INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,
+
+    CONSTRAINT fk_favourites_user_id
+        FOREIGN KEY (user_id)
+        REFERENCES users(uid),
 
     CONSTRAINT fk_favourites_from_currency
         FOREIGN KEY (from_currency_id)
@@ -42,5 +60,5 @@ CREATE TABLE favourites (
         REFERENCES currency(cid),
 
     CONSTRAINT uq_favourite_pair
-        UNIQUE (from_currency_id, to_currency_id)
+        UNIQUE (user_id, from_currency_id, to_currency_id)
 );

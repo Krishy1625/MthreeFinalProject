@@ -10,8 +10,8 @@ public class Currency {
         return currencyId;
     }
 
-    public void setCurrencyId(int courseId) {
-        this.currencyId = courseId;
+    public void setCurrencyId(int currencyId) {
+        this.currencyId = currencyId;
     }
 
     public String getCurrencyCode() {
