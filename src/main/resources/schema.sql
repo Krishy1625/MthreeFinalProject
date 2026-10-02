@@ -42,7 +42,7 @@ CREATE TABLE conversion_history (
 );
 
 CREATE TABLE favourites (
-    wid INT PRIMARY KEY AUTO_INCREMENT,
+    fid INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,
