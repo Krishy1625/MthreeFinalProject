@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 
 public class ConversionHistory {
     private int historyId;
+    private int userId;
     private int fromCurrencyId;
     private int toCurrencyId;
     private BigDecimal amount;
     private BigDecimal exchangeRate;
     private BigDecimal convertedAmount;
-    private LocalDateTime date;
+    private LocalDateTime conversionDate;
+    private String notes;
 
     public int getHistoryId() {
         return historyId;
@@ -18,6 +20,14 @@ public class ConversionHistory {
 
     public void setHistoryId(int historyId) {
         this.historyId = historyId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public int getFromCurrencyId() {
@@ -61,10 +71,18 @@ public class ConversionHistory {
     }
 
     public LocalDateTime getDate() {
-        return date;
+        return conversionDate;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setDate(LocalDateTime conversionDate) {
+        this.conversionDate = conversionDate;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 }
