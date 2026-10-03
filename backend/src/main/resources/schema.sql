@@ -3,14 +3,20 @@
 --
 -- USE currencyDB;
 
-CREATE TABLE currency (
+CREATE TABLE IF NOT EXISTS users (
+    uid INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(30) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS currency (
     cid INT PRIMARY KEY AUTO_INCREMENT,
     currency_code VARCHAR(3) UNIQUE NOT NULL,
     currency_name VARCHAR(50) NOT NULL,
     currency_symbol VARCHAR(5)
 );
 
-CREATE TABLE conversion_history (
+CREATE TABLE IF NOT EXISTS conversion_history (
     hid INT PRIMARY KEY AUTO_INCREMENT,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,
@@ -28,7 +34,7 @@ CREATE TABLE conversion_history (
         REFERENCES currency(cid)
 );
 
-CREATE TABLE favourites (
+CREATE TABLE IF NOT EXISTS favourites (
     wid INT PRIMARY KEY AUTO_INCREMENT,
     from_currency_id INT NOT NULL,
     to_currency_id INT NOT NULL,
