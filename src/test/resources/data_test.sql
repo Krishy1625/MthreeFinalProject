@@ -1,9 +1,9 @@
 -- USE currencyDB_test;
 
-INSERT INTO users (username, password_hash, email)
+INSERT INTO users (username, password_hash)
 VALUES
-    ('testuser1', 'hashedpassword1', 'test1@test.com'),
-    ('testuser2', 'hashedpassword2', 'test2@test.com');
+    ('testuser1', 'hashedpassword1'),
+    ('testuser2', 'hashedpassword2');
 
 INSERT INTO currency (currency_code, currency_name, currency_symbol)
 VALUES

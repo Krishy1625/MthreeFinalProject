@@ -9,6 +9,4 @@ public interface UserDao {
     User findUserById(int userId);
 
     User findUserByUsername(String username);
-
-    User findUserByEmail(String email);
 }

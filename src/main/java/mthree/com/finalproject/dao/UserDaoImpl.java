@@ -17,11 +17,10 @@ public class UserDaoImpl implements UserDao {
     // add a new user to the db
     @Override
     public User addUser(User user) {
-        final String ADD_USER = "INSERT INTO users(username, password_hash, email) VALUES(?,?,?)";
+        final String ADD_USER = "INSERT INTO users(username, password_hash) VALUES(?,?)";
         jdbcTemplate.update(ADD_USER,
                 user.getUsername(),
-                user.getPasswordHash(),
-                user.getEmail());
+                user.getPasswordHash());
         return user;
     }
 
@@ -39,11 +38,4 @@ public class UserDaoImpl implements UserDao {
         return jdbcTemplate.queryForObject(GET_USER_BY_USERNAME, new UserMapper(), username);
     }
 
-    // find user by email
-    @Override
-    public User findUserByEmail(String email) {
-        final String GET_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
-        return jdbcTemplate.queryForObject(GET_USER_BY_EMAIL, new UserMapper(), email);
-    }
 }
-

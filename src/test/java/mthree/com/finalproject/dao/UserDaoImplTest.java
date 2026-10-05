@@ -28,7 +28,6 @@ class UserDaoImplTest {
         User newUser = new User();
         newUser.setUsername("testuser3");
         newUser.setPasswordHash("hashedpassword3");
-        newUser.setEmail("test3@test.com");
 
         userDao.addUser(newUser);
 
@@ -37,7 +36,6 @@ class UserDaoImplTest {
         assertNotNull(savedUser);
         assertEquals("testuser3", savedUser.getUsername());
         assertEquals("hashedpassword3", savedUser.getPasswordHash());
-        assertEquals("test3@test.com", savedUser.getEmail());
     }
 
     @Test
@@ -49,7 +47,6 @@ class UserDaoImplTest {
         assertNotNull(user);
         assertEquals("testuser2", user.getUsername());
         assertEquals("hashedpassword2", user.getPasswordHash());
-        assertEquals("test2@test.com", user.getEmail());
     }
 
     @Test
@@ -61,18 +58,5 @@ class UserDaoImplTest {
         assertNotNull(user);
         assertEquals("testuser1", user.getUsername());
         assertEquals("hashedpassword1", user.getPasswordHash());
-        assertEquals("test1@test.com", user.getEmail());
-    }
-
-    @Test
-    void findUserByEmail() {
-        User user = userDao.findUserByEmail("test1@test.com");
-
-        assertThrows(Exception.class, () -> {userDao.findUserByEmail("m");});
-
-        assertNotNull(user);
-        assertEquals("testuser1", user.getUsername());
-        assertEquals("hashedpassword1", user.getPasswordHash());
-        assertEquals("test1@test.com", user.getEmail());
     }
 }

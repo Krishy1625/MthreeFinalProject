@@ -4,7 +4,6 @@ public class User {
     private int userId;
     private String username;
     private String passwordHash;
-    private String email;
 
     public int getUserId() {
         return userId;
@@ -30,11 +29,4 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }
