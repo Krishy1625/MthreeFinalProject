@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/users")
@@ -34,9 +33,6 @@ public class UserController {
         String username = request.getUsername().trim();
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(new ApiError("Passwords do not match."));
-        }
-        if (request.getPassword().getBytes(StandardCharsets.UTF_8).length > 72) {
-            return ResponseEntity.badRequest().body(new ApiError("Password must be no more than 72 bytes."));
         }
 
         if (userExistsByUsername(username)) {
