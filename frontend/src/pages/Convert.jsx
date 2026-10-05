@@ -1,7 +1,6 @@
 import { useState } from 'react';
-
-// Sample data so the page works standalone.
-// TODO: replace with fetch('/api/currencies') once CurrencyController exists.
+// this is justa  placeholder page that will be replaced
+//  replace with fetch('/api/currencies') once CurrencyController exists.
 const CURRENCIES = ['GBP', 'USD'];
 const PER_GBP = { GBP: 1, USD: 1.27};
 
