@@ -41,3 +41,4 @@ build/
 ## local
 src/main/resources/application.properties
 .idea/*
+frontend/node_modules
