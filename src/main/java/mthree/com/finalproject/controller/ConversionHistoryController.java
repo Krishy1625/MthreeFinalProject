@@ -28,4 +28,16 @@ public class ConversionHistoryController {
     public List<ConversionHistory> getHistory(@PathVariable int userId) {
         return historyService.getHistoryByUserId(userId);
     }
+
+    @DeleteMapping("/{historyId}")
+    public ResponseEntity<Void> deleteHistory(@PathVariable int historyId) {
+        historyService.deleteHistory(historyId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<Void> deleteAllHistory(@PathVariable int userId) {
+        historyService.deleteAllHistory(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
