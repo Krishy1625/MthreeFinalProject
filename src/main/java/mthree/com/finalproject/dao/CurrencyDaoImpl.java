@@ -19,7 +19,7 @@ public class CurrencyDaoImpl implements CurrencyDao {
     // get the list of all available currencies
     @Override
     public List<Currency> getAllCurrencies() {
-        final String GET_ALL_CURRENCIES = "SELECT * FROM currency";
+        final String GET_ALL_CURRENCIES = "SELECT * FROM currency ORDER BY currency_code";
         return jdbcTemplate.query(GET_ALL_CURRENCIES, new CurrencyMapper());
     }
 
