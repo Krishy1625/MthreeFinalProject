@@ -2,6 +2,7 @@ package mthree.com.finalproject.controller;
 
 import mthree.com.finalproject.model.Favourite;
 import mthree.com.finalproject.service.FavouriteService;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +25,14 @@ public class FavouriteController {
     }
 
     @PostMapping
-    public ResponseEntity<Favourite> addFavourite(@RequestBody Favourite favourite) {
-        Favourite addedFavourite = favouriteService.addFavourite(favourite);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
+    public ResponseEntity<?> addFavourite(@RequestBody Favourite favourite) {
+        try {
+            Favourite addedFavourite = favouriteService.addFavourite(favourite);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
+        } catch (DuplicateKeyException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("This currency pair is already a favourite.");
+        }
     }
 
     @DeleteMapping("/{favouriteId}")

@@ -28,6 +28,9 @@ export default function FavouritePairs({
   const [removingId, setRemovingId] = useState(null);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const pairIsSaved = favourites.some(favourite =>
+    favourite.fromCurrencyId === currentPair?.fromId
+      && favourite.toCurrencyId === currentPair?.toId);
 
   const loadFavourites = useCallback(async signal => {
     const response = await fetch(`/api/favourites/user/${userId}`, { signal });
@@ -108,10 +111,14 @@ export default function FavouritePairs({
           <button
             type="button"
             onClick={saveFavourite}
-            disabled={isSaving}
+            disabled={isSaving || isLoading || pairIsSaved}
             className="bg-amber-500 px-4 py-2 font-semibold hover:bg-amber-400 disabled:opacity-60"
           >
-            {isSaving ? 'Saving...' : `Save ${currentPair.from} / ${currentPair.to}`}
+            {isSaving
+              ? 'Saving...'
+              : pairIsSaved
+                ? `${currentPair.from} / ${currentPair.to} already saved`
+                : `Save ${currentPair.from} / ${currentPair.to}`}
           </button>
         )}
       </div>
