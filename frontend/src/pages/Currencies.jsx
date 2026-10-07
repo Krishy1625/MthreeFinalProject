@@ -37,24 +37,33 @@ export default function Currencies() {
   });
 
   return (
-      <section className="text-white">
-
-        {/* Page heading */}
+      <section>
+        {/* Heading */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
-            Currencies
-          </h1>
+            <div className="mb-3 h-[3px] w-12 rounded-full bg-[#FB923C]" />
 
-          <p className="mt-2 text-sm text-blue-200">
-            Browse the currencies available for conversion.
-          </p>
+            <h1 className="text-3xl font-bold text-[#02022b]">
+              Currencies
+            </h1>
+
+            <p className="mt-2 text-sm font-medium text-[#24244f]">
+              Browse the currencies available for conversion.
+            </p>
         </div>
 
-        {/* Main card */}
-        <div className="overflow-hidden rounded-2xl border border-blue-800/50 bg-blue-950/60 shadow-2xl backdrop-blur-md">
-
+        {/* Table card */}
+        <div
+            className="
+          overflow-hidden
+          rounded-2xl
+          border border-white/50
+          bg-[#172554]/75
+          shadow-xl
+          backdrop-blur-md
+        "
+        >
           {/* Search */}
-          <div className="border-b border-blue-800/50 p-5">
+          <div className="border-b border-white/10 p-5">
             <input
                 type="text"
                 placeholder="Search by currency name or code..."
@@ -63,47 +72,45 @@ export default function Currencies() {
                 className="
               w-full
               rounded-lg
-              border border-blue-800
-              bg-[#02022b]
+              border border-white/20
+              bg-white/90
               px-4 py-3
-              text-white
-              placeholder-blue-300/50
+              text-[#02022b]
+              placeholder:text-[#24244f]/50
               outline-none
               transition
-              focus:border-blue-500
+              focus:border-[#FB923C]
               focus:ring-2
-              focus:ring-blue-500/20
+              focus:ring-[#FB923C]/20
             "
             />
           </div>
 
-          {/* Loading */}
           {loading && (
               <p
                   role="status"
-                  className="p-8 text-center text-blue-200"
+                  className="p-8 text-center text-blue-100"
               >
                 Loading currencies...
               </p>
           )}
 
-          {/* Error */}
           {error && (
               <p
                   role="alert"
-                  className="m-5 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-300"
+                  className="m-5 rounded-lg bg-red-500/10 p-4 text-red-200"
               >
                 {error}
               </p>
           )}
 
-          {/* Currency table */}
           {!loading && !error && (
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
 
-                  <thead className="bg-blue-900/40 text-sm uppercase tracking-wider text-blue-200">
-                  <tr>
+                  {/* Header */}
+                  <thead className="bg-[#1E3A8A]/55">
+                  <tr className="text-sm uppercase tracking-wider text-blue-100">
                     <th className="px-6 py-4">
                       Symbol
                     </th>
@@ -123,47 +130,54 @@ export default function Currencies() {
                       <tr
                           key={currency.currencyCode}
                           className="
-                      border-t border-blue-900/50
-                      transition-colors
-                      hover:bg-blue-600/10
-                    "
+                            border-t border-blue-300/10
+                            text-white
+                            transition-colors
+                            hover:bg-blue-400/10
+                          "
                       >
+                        {/* Symbol */}
                         <td className="px-6 py-4">
-                          <div className="
-                        flex h-10 w-10
-                        items-center justify-center
-                        rounded-lg
-                        bg-blue-600/20
-                        text-lg font-semibold
-                        text-blue-300
-                      ">
+                          <div
+                              className="
+                                flex h-10 w-10
+                                items-center justify-center
+                                rounded-lg
+                                bg-blue-400/20
+                                font-semibold
+                                text-blue-100
+                              "
+                          >
                             {currency.currencySymbol || '-'}
                           </div>
                         </td>
 
+                        {/* Code */}
                         <td className="px-6 py-4">
-                      <span className="
-                        rounded-md
-                        bg-[#FB923C]/15
-                        px-3 py-1
-                        font-semibold
-                        text-[#FB923C]
-                      ">
+                      <span
+                          className="
+                            rounded-md
+                            bg-[#FB923C]/15
+                            px-3 py-1
+                            font-semibold
+                            text-[#FB923C]
+                          "
+                      >
                         {currency.currencyCode}
                       </span>
                         </td>
 
-                        <td className="px-6 py-4 font-medium text-slate-200">
+                        {/* Currency name */}
+                        <td className="px-6 py-4 font-medium text-blue-50">
                           {currency.currencyName}
                         </td>
                       </tr>
                   ))}
                   </tbody>
-
                 </table>
 
                 {filteredCurrencies.length === 0 && (
-                    <div className="p-10 text-center text-blue-200">
+                    <div className="p-10 text-center text-blue-100">
                       No currencies found.
                     </div>
                 )}
@@ -173,3 +187,4 @@ export default function Currencies() {
       </section>
   );
 }
+
