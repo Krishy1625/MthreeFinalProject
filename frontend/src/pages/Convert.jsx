@@ -39,7 +39,9 @@ export default function Convert({ user }) {
         }
         const data = await response.json();
         setCurrencies(data);
-        setFrom(data[0]?.currencyCode || '');
+        setFrom(data.find(currency => currency.currencyCode === 'GBP')?.currencyCode
+          || data[0]?.currencyCode
+          || '');
         setTo(data.find(currency => currency.currencyCode === 'USD')?.currencyCode
           || data[1]?.currencyCode
           || data[0]?.currencyCode
@@ -158,6 +160,20 @@ export default function Convert({ user }) {
                   ))}
                 </select>
               </div>
+              <button
+                type="button"
+                aria-label="Swap currencies"
+                onClick={() => {
+                  setFrom(to);
+                  setTo(from);
+                  setResult(null);
+                  setError('');
+                }}
+                disabled={isDisabled}
+                className="self-end border-2 border-gray-400 bg-white px-3 py-2.5 hover:bg-gray-100 disabled:opacity-60"
+              >
+                Swap
+              </button>
               <div className="min-w-36 flex-1">
                 <label htmlFor="to" className={label}>To</label>
                 <select
