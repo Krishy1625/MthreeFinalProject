@@ -14,17 +14,16 @@ export default function App() {
   // Pages after login share the navbar; anyone not logged in goes back to login.
     const protect = children =>
         user ? (
-            <div className="relative min-h-screen overflow-hidden bg-[#02022b]">
+            <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#5286ff] via-[#F8FAFC] to-[#f0dec7]">
 
-                {/* Top-right shapes */}
-                <div className="absolute -right-40 -top-52 h-[650px] w-[650px] rounded-[45%] bg-blue-600/80 rotate-12" />
-                <div className="absolute right-16 -top-56 h-[600px] w-[520px] rounded-[45%] bg-blue-900/70 rotate-12" />
+                {/* Top-right decoration */}
+                <div className="absolute -right-52 -top-64 h-[850px] w-[850px] rounded-full bg-blue-500/15" />
+                <div className="absolute -right-20 -top-72 h-[700px] w-[820px] rounded-full bg-blue-400/10" />
 
-                {/* Bottom-left shapes */}
-                <div className="absolute -bottom-60 -left-44 h-[650px] w-[650px] rounded-[45%] bg-blue-600/80 -rotate-12" />
-                <div className="absolute -bottom-64 left-10 h-[600px] w-[520px] rounded-[45%] bg-blue-900/70 -rotate-12" />
+                {/* Bottom-left decoration */}
+                <div className="absolute -bottom-72 -left-52 h-[850px] w-[850px] rounded-full bg-blue-500/15" />
+                <div className="absolute -bottom-80 left-0 h-[700px] w-[700px] rounded-full bg-blue-400/10" />
 
-                {/* Actual page */}
                 <div className="relative z-10">
                     <Navbar onLogout={() => setUser(null)} />
 
