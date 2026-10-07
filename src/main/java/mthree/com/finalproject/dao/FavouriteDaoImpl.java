@@ -38,6 +38,21 @@ public class FavouriteDaoImpl implements FavouriteDao {
         return favourite;
     }
 
+    // edits an existing favourite
+    @Override
+    public Favourite editFavourite(Favourite favourite) {
+        final String UPDATE_FAVOURITE = "UPDATE favourites SET from_currency_id = ?, to_currency_id = ? WHERE fid = ?";
+
+        jdbcTemplate.update(
+                UPDATE_FAVOURITE,
+                favourite.getFromCurrencyId(),
+                favourite.getToCurrencyId(),
+                favourite.getFavId()
+        );
+
+        return favourite;
+    }
+
     // delete favourite
     @Override
     public void deleteFavourite(int favouriteId) {

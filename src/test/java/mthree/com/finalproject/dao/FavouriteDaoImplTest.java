@@ -64,6 +64,28 @@ class FavouriteDaoImplTest {
     }
 
     @Test
+    void updateFavourite() {
+        List<Favourite> favourites = favDao.getAllFavourites(1);
+        Favourite favourite = favourites.get(0);
+
+        favourite.setFromCurrencyId(2);
+        favourite.setToCurrencyId(4);
+
+        favDao.editFavourite(favourite);
+
+        favourites = favDao.getAllFavourites(1);
+
+        Favourite updatedFavourite = favourites.stream()
+                .filter(f -> f.getFavId() == favourite.getFavId())
+                .findFirst()
+                .orElse(null);
+
+        assertNotNull(updatedFavourite);
+        assertEquals(2, updatedFavourite.getFromCurrencyId());
+        assertEquals(4, updatedFavourite.getToCurrencyId());
+    }
+
+    @Test
     void deleteFavourite() {
         List<Favourite> favourites = favDao.getAllFavourites(1);
 
