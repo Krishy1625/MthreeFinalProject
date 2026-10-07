@@ -23,6 +23,8 @@ export default function Convert({ user }) {
   const [to, setTo] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [notes, setNotes] = useState('');
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
   const [isLoadingCurrencies, setIsLoadingCurrencies] = useState(true);
   const [isConverting, setIsConverting] = useState(false);
 
@@ -57,10 +59,9 @@ export default function Convert({ user }) {
     return () => controller.abort();
   }, []);
 
-  const convert = async event => {
+  const openNotesDialog = event => {
     event.preventDefault();
     setError('');
-    setResult(null);
 
     if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
       setError('Enter an amount greater than zero.');
@@ -70,7 +71,14 @@ export default function Convert({ user }) {
       setError('Select both currencies.');
       return;
     }
+    setNotes('');
+    setShowNotesDialog(true);
+  };
 
+  const convert = async event => {
+    event.preventDefault();
+    setError('');
+    setResult(null);
     setIsConverting(true);
     try {
       const params = new URLSearchParams({ amount, from, to });
@@ -80,7 +88,28 @@ export default function Convert({ user }) {
       if (!response.ok) {
         throw new Error(await getErrorMessage(response));
       }
-      setResult(await response.json());
+      const conversion = await response.json();
+      setResult(conversion);
+      setShowNotesDialog(false);
+
+      const fromCurrency = currencies.find(currency => currency.currencyCode === from);
+      const toCurrency = currencies.find(currency => currency.currencyCode === to);
+      const historyResponse = await fetch('/api/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.userId,
+          fromCurrencyId: fromCurrency.currencyId,
+          toCurrencyId: toCurrency.currencyId,
+          amount: conversion.amount,
+          exchangeRate: conversion.exchangeRate,
+          convertedAmount: conversion.convertedAmount,
+          notes: notes.trim() || null,
+        }),
+      });
+      if (!historyResponse.ok) {
+        throw new Error(`Conversion completed, but saving it to history failed: ${await getErrorMessage(historyResponse)}`);
+      }
     } catch (conversionError) {
       setError(conversionError.message || 'Could not connect to the conversion service.');
     } finally {
@@ -97,7 +126,7 @@ export default function Convert({ user }) {
         {isLoadingCurrencies ? (
           <p role="status">Loading currencies...</p>
         ) : (
-          <form onSubmit={convert}>
+          <form onSubmit={openNotesDialog}>
             <div className="flex flex-wrap gap-3">
               <div className="min-w-36 flex-1">
                 <label htmlFor="amount" className={label}>Amount</label>
@@ -171,7 +200,63 @@ export default function Convert({ user }) {
             </p>
           </div>
         )}
-      </section>
+        {showNotesDialog && (
+          <div
+            className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4"
+            role="presentation"
+            onMouseDown={event => {
+              if (event.target === event.currentTarget && !isConverting) {
+                setShowNotesDialog(false);
+              }
+            }}
+          >
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="conversion-notes-title"
+              className="w-full max-w-md border-2 border-gray-400 bg-white p-5 shadow-xl"
+            >
+              <h2 id="conversion-notes-title" className="mb-2 text-lg font-semibold">
+                Add a note
+              </h2>
+              <p className="mb-4 text-sm text-gray-600">
+                Add an optional note to this conversion before saving it to history.
+              </p>
+              <form onSubmit={convert}>
+                <label htmlFor="conversion-notes" className={label}>Note (optional)</label>
+                <textarea
+                  id="conversion-notes"
+                  maxLength={255}
+                  rows={3}
+                  className={field}
+                  value={notes}
+                  onChange={event => setNotes(event.target.value)}
+                  disabled={isConverting}
+                />
+                <p className="mt-1 text-right text-xs text-gray-500">{notes.length}/255</p>
+                {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
+                <div className="mt-4 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowNotesDialog(false)}
+                    disabled={isConverting}
+                    className="border border-gray-400 px-4 py-2 disabled:opacity-60"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isConverting}
+                    className="bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60"
+                  >
+                    {isConverting ? 'Converting...' : 'Convert and save'}
+                  </button>
+                </div>
+              </form>
+            </section>
+          </div>
+        )}
+        </section>
       <FavouritePairs
         userId={user.userId}
         currentPair={{

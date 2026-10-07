@@ -13,6 +13,10 @@ public class ConversionHistory {
     private BigDecimal convertedAmount;
     private LocalDateTime conversionDate;
     private String notes;
+    private String fromCurrencyCode;
+    private String toCurrencyCode;
+    private String fromCurrencyName;
+    private String toCurrencyName;
 
     public int getHistoryId() {
         return historyId;
@@ -84,5 +88,37 @@ public class ConversionHistory {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getFromCurrencyCode() {
+        return fromCurrencyCode;
+    }
+
+    public void setFromCurrencyCode(String fromCurrencyCode) {
+        this.fromCurrencyCode = fromCurrencyCode;
+    }
+
+    public String getToCurrencyCode() {
+        return toCurrencyCode;
+    }
+
+    public void setToCurrencyCode(String toCurrencyCode) {
+        this.toCurrencyCode = toCurrencyCode;
+    }
+
+    public String getFromCurrencyName() {
+        return fromCurrencyName;
+    }
+
+    public void setFromCurrencyName(String fromCurrencyName) {
+        this.fromCurrencyName = fromCurrencyName;
+    }
+
+    public String getToCurrencyName() {
+        return toCurrencyName;
+    }
+
+    public void setToCurrencyName(String toCurrencyName) {
+        this.toCurrencyName = toCurrencyName;
     }
 }

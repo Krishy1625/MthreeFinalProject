@@ -37,7 +37,16 @@ public class ConversionHistoryDaoImpl implements ConversionHistoryDao {
     // Get all conversion history for a user
     @Override
     public List<ConversionHistory> getHistoryByUserId(int userId) {
-        final String GET_ALL_HISTORY = "SELECT * FROM conversion_history WHERE user_id = ? ORDER BY conversion_date DESC";
+        final String GET_ALL_HISTORY = "SELECT h.*, " +
+                "from_currency.currency_code AS from_currency_code, " +
+                "to_currency.currency_code AS to_currency_code, " +
+                "from_currency.currency_name AS from_currency_name, " +
+                "to_currency.currency_name AS to_currency_name " +
+                "FROM conversion_history h " +
+                "JOIN currency from_currency ON h.from_currency_id = from_currency.cid " +
+                "JOIN currency to_currency ON h.to_currency_id = to_currency.cid " +
+                "WHERE h.user_id = ? " +
+                "ORDER BY h.conversion_date DESC";
         return jdbcTemplate.query(
                 GET_ALL_HISTORY,
                 new ConversionHistoryMapper(),

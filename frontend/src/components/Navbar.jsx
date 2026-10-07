@@ -15,6 +15,7 @@ export default function Navbar({ onLogout }) {
       <NavLink to="/home" className={link}>Convert</NavLink>
       <NavLink to="/currencies" className={link}>Currencies</NavLink>
       <NavLink to="/favourites" className={link}>Favourites</NavLink>
+      <NavLink to="/history" className={link}>History</NavLink>
       <span className="flex-1" />
       <button onClick={logout} className="bg-amber-500 px-4 py-2 font-semibold hover:bg-amber-400">
         Log out
