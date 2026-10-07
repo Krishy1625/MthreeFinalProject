@@ -1,10 +1,7 @@
 package mthree.com.finalproject.controller;
 
-import mthree.com.finalproject.dao.CurrencyDao;
-import mthree.com.finalproject.dao.FavouriteDao;
-import mthree.com.finalproject.dao.UserDao;
-import mthree.com.finalproject.model.Currency;
 import mthree.com.finalproject.model.Favourite;
+import mthree.com.finalproject.service.FavouriteService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -12,110 +9,59 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import java.util.Locale;
+import java.util.List;
 
 @RestController
-@RequestMapping("/api/users/{userId}/favourites")
+@RequestMapping("/api/favourites")
 public class FavouriteController {
 
-    private final FavouriteDao favouriteDao;
-    private final CurrencyDao currencyDao;
-    private final UserDao userDao;
+    private final FavouriteService favouriteService;
 
-    public FavouriteController(FavouriteDao favouriteDao, CurrencyDao currencyDao, UserDao userDao) {
-        this.favouriteDao = favouriteDao;
-        this.currencyDao = currencyDao;
-        this.userDao = userDao;
+    public FavouriteController(FavouriteService favouriteService) {
+        this.favouriteService = favouriteService;
     }
 
-    @GetMapping
-    public ResponseEntity<?> getFavourites(@PathVariable int userId) {
-        if (!userExists(userId)) {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getAllFavourites(@PathVariable int userId) {
+        try {
+            List<Favourite> favourites = favouriteService.getAllFavourites(userId);
+            return ResponseEntity.ok(favourites);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new ApiError(exception.getMessage()));
         }
-        return ResponseEntity.ok(favouriteDao.getAllFavourites(userId));
     }
 
     @PostMapping
-    public ResponseEntity<?> addFavourite(
-            @PathVariable int userId,
-            @Valid @RequestBody FavouriteRequest request) {
-        if (!userExists(userId)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Currency fromCurrency;
-        Currency toCurrency;
+    public ResponseEntity<?> addFavourite(@Valid @RequestBody Favourite favourite) {
         try {
-            fromCurrency = currencyDao.findCurrencyByCode(normalizeCode(request.getFromCurrency()));
-            toCurrency = currencyDao.findCurrencyByCode(normalizeCode(request.getToCurrency()));
-        } catch (EmptyResultDataAccessException exception) {
-            return ResponseEntity.badRequest().body(new ApiError("Select valid currencies."));
-        }
-
-        Favourite favourite = new Favourite();
-        favourite.setUserId(userId);
-        favourite.setFromCurrencyId(fromCurrency.getCurrencyId());
-        favourite.setToCurrencyId(toCurrency.getCurrencyId());
-
-        try {
-            favouriteDao.addFavourite(favourite);
+            Favourite addedFavourite = favouriteService.addFavourite(favourite);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new ApiError(exception.getMessage()));
         } catch (DuplicateKeyException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ApiError("That currency pair is already a favourite."));
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/{favouriteId}")
-    public ResponseEntity<Void> deleteFavourite(
-            @PathVariable int userId,
-            @PathVariable int favouriteId) {
-        if (!userExists(userId) || favouriteDao.deleteFavourite(favouriteId, userId) == 0) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteFavourite(@PathVariable int favouriteId) {
+        favouriteService.deleteFavourite(favouriteId);
         return ResponseEntity.noContent().build();
     }
 
-    private boolean userExists(int userId) {
+    @PutMapping
+    public ResponseEntity<?> editFavourite(@Valid @RequestBody Favourite favourite) {
         try {
-            userDao.findUserById(userId);
-            return true;
+            Favourite updatedFavourite = favouriteService.editFavourite(favourite);
+            return ResponseEntity.ok(updatedFavourite);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(new ApiError(exception.getMessage()));
         } catch (EmptyResultDataAccessException exception) {
-            return false;
-        }
-    }
-
-    private String normalizeCode(String code) {
-        return code.trim().toUpperCase(Locale.ROOT);
-    }
-
-    public static class FavouriteRequest {
-        @NotBlank
-        @Size(max = 3)
-        private String fromCurrency;
-
-        @NotBlank
-        @Size(max = 3)
-        private String toCurrency;
-
-        public String getFromCurrency() {
-            return fromCurrency;
-        }
-
-        public void setFromCurrency(String fromCurrency) {
-            this.fromCurrency = fromCurrency;
-        }
-
-        public String getToCurrency() {
-            return toCurrency;
-        }
-
-        public void setToCurrency(String toCurrency) {
-            this.toCurrency = toCurrency;
+            return ResponseEntity.notFound().build();
+        } catch (DuplicateKeyException exception) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiError("That currency pair is already a favourite."));
         }
     }
 

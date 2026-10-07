@@ -174,7 +174,12 @@ export default function Convert({ user }) {
       </section>
       <FavouritePairs
         userId={user.userId}
-        currentPair={{ from, to }}
+        currentPair={{
+          from,
+          to,
+          fromId: currencies.find(currency => currency.currencyCode === from)?.currencyId,
+          toId: currencies.find(currency => currency.currencyCode === to)?.currencyId,
+        }}
         onUsePair={(fromCode, toCode) => {
           setFrom(fromCode);
           setTo(toCode);

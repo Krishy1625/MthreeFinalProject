@@ -90,18 +90,9 @@ class FavouriteDaoImplTest {
         List<Favourite> favourites = favDao.getAllFavourites(1);
 
         int favouriteId = favourites.get(0).getFavId();
-        favDao.deleteFavourite(favouriteId, 1);
+        favDao.deleteFavourite(favouriteId);
 
         assertEquals(2, favDao.getAllFavourites(1).size());
-    }
-
-    @Test
-    void deleteFavouriteDoesNotRemoveAnotherUsersFavourite() {
-        List<Favourite> favourites = favDao.getAllFavourites(1);
-
-        int favouriteId = favourites.get(0).getFavId();
-        assertEquals(0, favDao.deleteFavourite(favouriteId, 2));
-        assertEquals(3, favDao.getAllFavourites(1).size());
     }
 
     @Test

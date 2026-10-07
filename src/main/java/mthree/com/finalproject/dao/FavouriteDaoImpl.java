@@ -66,9 +66,4 @@ public class FavouriteDaoImpl implements FavouriteDao {
         jdbcTemplate.update(DELETE_FAVOURITE, favouriteId);
     }
 
-    @Override
-    public int deleteFavourite(int favouriteId, int userId) {
-        final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ? AND user_id = ?";
-        return jdbcTemplate.update(DELETE_FAVOURITE, favouriteId, userId);
-    }
 }

@@ -30,7 +30,7 @@ export default function FavouritePairs({
   const [message, setMessage] = useState('');
 
   const loadFavourites = useCallback(async signal => {
-    const response = await fetch(`/api/users/${userId}/favourites`, { signal });
+    const response = await fetch(`/api/favourites/user/${userId}`, { signal });
     if (!response.ok) {
       throw new Error(await responseError(response));
     }
@@ -60,12 +60,13 @@ export default function FavouritePairs({
     setMessage('');
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/users/${userId}/favourites`, {
+      const response = await fetch('/api/favourites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fromCurrency: currentPair.from,
-          toCurrency: currentPair.to,
+          userId,
+          fromCurrencyId: currentPair.fromId,
+          toCurrencyId: currentPair.toId,
         }),
       });
       if (!response.ok) {
@@ -85,7 +86,7 @@ export default function FavouritePairs({
     setMessage('');
     setRemovingId(favouriteId);
     try {
-      const response = await fetch(`/api/users/${userId}/favourites/${favouriteId}`, {
+      const response = await fetch(`/api/favourites/${favouriteId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

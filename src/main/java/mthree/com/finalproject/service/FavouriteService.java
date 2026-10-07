@@ -1,11 +1,10 @@
-package mthree.com.finalproject.dao;
+package mthree.com.finalproject.service;
 
 import mthree.com.finalproject.model.Favourite;
 
 import java.util.List;
 
-public interface FavouriteDao {
-
+public interface FavouriteService {
     List<Favourite> getAllFavourites(int userId);
 
     Favourite addFavourite(Favourite favourite);
