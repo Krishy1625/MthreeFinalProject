@@ -47,5 +47,4 @@ public class FavouriteController {
 
         return ResponseEntity.ok(updatedFavourite);
     }
-    )
 }
