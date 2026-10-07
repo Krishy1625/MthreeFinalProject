@@ -19,7 +19,15 @@ public class FavouriteDaoImpl implements FavouriteDao {
     // get list of all favourites for user
     @Override
     public List<Favourite> getAllFavourites(int userId) {
-        final String GET_ALL_FAVOURITES = "SELECT * FROM favourites WHERE user_id = ?";
+        final String GET_ALL_FAVOURITES = "SELECT f.fid, f.user_id, f.from_currency_id, " +
+                "f.to_currency_id, from_currency.currency_code AS from_currency_code, " +
+                "to_currency.currency_code AS to_currency_code, " +
+                "from_currency.currency_name AS from_currency_name, " +
+                "to_currency.currency_name AS to_currency_name " +
+                "FROM favourites f " +
+                "JOIN currency from_currency ON f.from_currency_id = from_currency.cid " +
+                "JOIN currency to_currency ON f.to_currency_id = to_currency.cid " +
+                "WHERE f.user_id = ? ORDER BY f.fid";
         return jdbcTemplate.query(
                 GET_ALL_FAVOURITES,
                 new FavouriteMapper(),
@@ -38,18 +46,16 @@ public class FavouriteDaoImpl implements FavouriteDao {
         return favourite;
     }
 
-    // edits an existing favourite
     @Override
     public Favourite editFavourite(Favourite favourite) {
-        final String UPDATE_FAVOURITE = "UPDATE favourites SET from_currency_id = ?, to_currency_id = ? WHERE fid = ?";
-
-        jdbcTemplate.update(
-                UPDATE_FAVOURITE,
+        final String UPDATE_FAVOURITE = "UPDATE favourites " +
+                "SET from_currency_id = ?, to_currency_id = ? " +
+                "WHERE fid = ? AND user_id = ?";
+        jdbcTemplate.update(UPDATE_FAVOURITE,
                 favourite.getFromCurrencyId(),
                 favourite.getToCurrencyId(),
-                favourite.getFavId()
-        );
-
+                favourite.getFavId(),
+                favourite.getUserId());
         return favourite;
     }
 
@@ -59,4 +65,5 @@ public class FavouriteDaoImpl implements FavouriteDao {
         final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ?";
         jdbcTemplate.update(DELETE_FAVOURITE, favouriteId);
     }
+
 }

@@ -3,6 +3,7 @@ package mthree.com.finalproject.service;
 import mthree.com.finalproject.dao.FavouriteDao;
 import mthree.com.finalproject.model.Favourite;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -33,4 +34,3 @@ public class FavouriteServiceImpl implements FavouriteService {
         favouriteDao.deleteFavourite(favouriteId);
     }
 }
-

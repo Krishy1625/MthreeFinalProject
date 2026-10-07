@@ -24,27 +24,20 @@ public class FavouriteController {
     }
 
     @PostMapping
-    public ResponseEntity<Favourite> addFavourite(
-            @RequestBody Favourite favourite){
-
+    public ResponseEntity<Favourite> addFavourite(@RequestBody Favourite favourite) {
         Favourite addedFavourite = favouriteService.addFavourite(favourite);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(addedFavourite);
     }
 
     @DeleteMapping("/{favouriteId}")
     public ResponseEntity<Void> deleteFavourite(@PathVariable int favouriteId) {
-
         favouriteService.deleteFavourite(favouriteId);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping
-    public ResponseEntity<Favourite> editFavourite(
-            @RequestBody Favourite favourite) {
-
+    public ResponseEntity<Favourite> editFavourite(@RequestBody Favourite favourite) {
         Favourite updatedFavourite = favouriteService.editFavourite(favourite);
-
         return ResponseEntity.ok(updatedFavourite);
     }
 }

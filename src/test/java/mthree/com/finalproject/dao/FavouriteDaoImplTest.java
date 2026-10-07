@@ -94,4 +94,12 @@ class FavouriteDaoImplTest {
 
         assertEquals(2, favDao.getAllFavourites(1).size());
     }
+
+    @Test
+    void getAllFavouritesIncludesCurrencyCodes() {
+        Favourite favourite = favDao.getAllFavourites(1).get(0);
+
+        assertEquals("GBP", favourite.getFromCurrencyCode());
+        assertEquals("EUR", favourite.getToCurrencyCode());
+    }
 }

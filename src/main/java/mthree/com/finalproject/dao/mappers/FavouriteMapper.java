@@ -14,6 +14,10 @@ public class FavouriteMapper implements RowMapper<Favourite> {
         favourite.setUserId(rs.getInt("user_id"));
         favourite.setFromCurrencyId(rs.getInt("from_currency_id"));
         favourite.setToCurrencyId(rs.getInt("to_currency_id"));
+        favourite.setFromCurrencyCode(rs.getString("from_currency_code"));
+        favourite.setToCurrencyCode(rs.getString("to_currency_code"));
+        favourite.setFromCurrencyName(rs.getString("from_currency_name"));
+        favourite.setToCurrencyName(rs.getString("to_currency_name"));
 
         return favourite;
     }
