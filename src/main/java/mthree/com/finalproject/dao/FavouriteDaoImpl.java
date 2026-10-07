@@ -46,10 +46,29 @@ public class FavouriteDaoImpl implements FavouriteDao {
         return favourite;
     }
 
+    @Override
+    public Favourite editFavourite(Favourite favourite) {
+        final String UPDATE_FAVOURITE = "UPDATE favourites " +
+                "SET from_currency_id = ?, to_currency_id = ? " +
+                "WHERE fid = ? AND user_id = ?";
+        jdbcTemplate.update(UPDATE_FAVOURITE,
+                favourite.getFromCurrencyId(),
+                favourite.getToCurrencyId(),
+                favourite.getFavId(),
+                favourite.getUserId());
+        return favourite;
+    }
+
     // delete favourite
     @Override
     public void deleteFavourite(int favouriteId) {
         final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ?";
         jdbcTemplate.update(DELETE_FAVOURITE, favouriteId);
+    }
+
+    @Override
+    public int deleteFavourite(int favouriteId, int userId) {
+        final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ? AND user_id = ?";
+        return jdbcTemplate.update(DELETE_FAVOURITE, favouriteId, userId);
     }
 }
