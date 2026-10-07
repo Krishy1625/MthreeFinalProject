@@ -1,7 +1,7 @@
 package mthree.com.finalproject.controller;
 
-import mthree.com.finalproject.dao.UserDao;
 import mthree.com.finalproject.model.User;
+import mthree.com.finalproject.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,25 +21,25 @@ import static org.mockito.Mockito.when;
 
 class UserControllerTest {
 
-    private UserDao userDao;
+    private UserService userService;
     private PasswordEncoder passwordEncoder;
     private UserController userController;
 
     @BeforeEach
     void setUp() {
-        userDao = mock(UserDao.class);
+        userService = mock(UserService.class);
         passwordEncoder = new BCryptPasswordEncoder();
-        userController = new UserController(userDao, passwordEncoder);
+        userController = new UserController(userService, passwordEncoder);
     }
 
     @Test
     void registerStoresEncodedPasswordAndReturnsPublicUserDetails() {
-        when(userDao.findUserByUsername("alice")).thenThrow(new EmptyResultDataAccessException(1));
+        when(userService.findUserByUsername("alice")).thenThrow(new EmptyResultDataAccessException(1));
         doAnswer(invocation -> {
             User user = invocation.getArgument(0);
             user.setUserId(42);
             return user;
-        }).when(userDao).addUser(any(User.class));
+        }).when(userService).addUser(any(User.class));
 
         UserController.RegisterRequest request = new UserController.RegisterRequest();
         request.setUsername("alice");
@@ -53,7 +53,7 @@ class UserControllerTest {
         assertEquals("alice", body.getUsername());
 
         var storedUser = org.mockito.ArgumentCaptor.forClass(User.class);
-        verify(userDao).addUser(storedUser.capture());
+        verify(userService).addUser(storedUser.capture());
         assertTrue(passwordEncoder.matches("password123", storedUser.getValue().getPasswordHash()));
         assertFalse(storedUser.getValue().getPasswordHash().equals("password123"));
     }
@@ -78,7 +78,7 @@ class UserControllerTest {
         user.setUserId(42);
         user.setUsername("alice");
         user.setPasswordHash(passwordEncoder.encode("password123"));
-        when(userDao.findUserByUsername("alice")).thenReturn(user);
+        when(userService.findUserByUsername("alice")).thenReturn(user);
 
         UserController.LoginRequest request = new UserController.LoginRequest();
         request.setUsername("alice");
@@ -94,7 +94,7 @@ class UserControllerTest {
         User user = new User();
         user.setUsername("alice");
         user.setPasswordHash(passwordEncoder.encode("password123"));
-        when(userDao.findUserByUsername("alice")).thenReturn(user);
+        when(userService.findUserByUsername("alice")).thenReturn(user);
 
         UserController.LoginRequest request = new UserController.LoginRequest();
         request.setUsername("alice");

@@ -1,7 +1,7 @@
 package mthree.com.finalproject.controller;
 
-import mthree.com.finalproject.dao.UserDao;
 import mthree.com.finalproject.model.User;
+import mthree.com.finalproject.service.UserService;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -21,11 +21,11 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserDao userDao;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserDao userDao, PasswordEncoder passwordEncoder) {
-        this.userDao = userDao;
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -48,7 +48,7 @@ public class UserController {
         user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         try {
-            userDao.addUser(user);
+            userService.addUser(user);
         } catch (DuplicateKeyException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ApiError("That username is already in use."));
@@ -61,7 +61,7 @@ public class UserController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         User user;
         try {
-            user = userDao.findUserByUsername(request.getUsername().trim());
+            user = userService.findUserByUsername(request.getUsername().trim());
         } catch (EmptyResultDataAccessException exception) {
             return invalidCredentials();
         }
@@ -74,7 +74,7 @@ public class UserController {
 
     private boolean userExistsByUsername(String username) {
         try {
-            userDao.findUserByUsername(username);
+            userService.findUserByUsername(username);
             return true;
         } catch (EmptyResultDataAccessException exception) {
             return false;
