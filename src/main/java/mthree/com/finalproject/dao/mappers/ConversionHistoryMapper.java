@@ -19,6 +19,10 @@ public class ConversionHistoryMapper implements RowMapper<ConversionHistory> {
         ch.setConvertedAmount(rs.getBigDecimal("converted_amount"));
         ch.setDate(rs.getTimestamp("conversion_date").toLocalDateTime());
         ch.setNotes(rs.getString("notes"));
+        ch.setFromCurrencyCode(rs.getString("from_currency_code"));
+        ch.setToCurrencyCode(rs.getString("to_currency_code"));
+        ch.setFromCurrencyName(rs.getString("from_currency_name"));
+        ch.setToCurrencyName(rs.getString("to_currency_name"));
 
         return ch;
     }
