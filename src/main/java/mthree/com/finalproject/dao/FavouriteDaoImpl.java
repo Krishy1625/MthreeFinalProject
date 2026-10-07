@@ -46,10 +46,10 @@ public class FavouriteDaoImpl implements FavouriteDao {
         return favourite;
     }
 
-    // only allow the owner of a favourite to remove it
+    // delete favourite
     @Override
-    public int deleteFavourite(int favouriteId, int userId) {
-        final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ? AND user_id = ?";
-        return jdbcTemplate.update(DELETE_FAVOURITE, favouriteId, userId);
+    public void deleteFavourite(int favouriteId) {
+        final String DELETE_FAVOURITE = "DELETE FROM favourites WHERE fid = ?";
+        jdbcTemplate.update(DELETE_FAVOURITE, favouriteId);
     }
 }
