@@ -29,10 +29,12 @@ class UserDaoImplTest {
         newUser.setUsername("testuser3");
         newUser.setPasswordHash("hashedpassword3");
 
-        userDao.addUser(newUser);
+        User addedUser = userDao.addUser(newUser);
 
         User savedUser = userDao.findUserByUsername("testuser3");
 
+        assertTrue(addedUser.getUserId() > 0);
+        assertEquals(savedUser.getUserId(), addedUser.getUserId());
         assertNotNull(savedUser);
         assertEquals("testuser3", savedUser.getUsername());
         assertEquals("hashedpassword3", savedUser.getPasswordHash());

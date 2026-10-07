@@ -3,7 +3,12 @@ package mthree.com.finalproject.dao;
 import mthree.com.finalproject.dao.mappers.UserMapper;
 import mthree.com.finalproject.model.User;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -18,9 +23,20 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User addUser(User user) {
         final String ADD_USER = "INSERT INTO users(username, password_hash) VALUES(?,?)";
-        jdbcTemplate.update(ADD_USER,
-                user.getUsername(),
-                user.getPasswordHash());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement(
+                    ADD_USER, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPasswordHash());
+            return statement;
+        }, keyHolder);
+
+        Number generatedId = keyHolder.getKey();
+        if (generatedId == null) {
+            throw new IllegalStateException("Unable to retrieve the new user ID.");
+        }
+        user.setUserId(generatedId.intValue());
         return user;
     }
 

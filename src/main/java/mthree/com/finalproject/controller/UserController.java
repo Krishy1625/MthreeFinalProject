@@ -48,7 +48,7 @@ public class UserController {
         user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         try {
-            userService.addUser(user);
+            user = userService.addUser(user);
         } catch (DuplicateKeyException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ApiError("That username is already in use."));
