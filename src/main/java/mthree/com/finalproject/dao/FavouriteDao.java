@@ -10,5 +10,7 @@ public interface FavouriteDao {
 
     Favourite addFavourite(Favourite favourite);
 
+    Favourite editFavourite(Favourite favourite);
+
     void deleteFavourite(int favouriteId);
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Convert from './pages/Convert.jsx';
+import Currencies from './pages/Currencies.jsx';
 import Navbar from './components/Navbar.jsx';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Login onLogin={setUser} />} />
       <Route path="/home" element={protect(<Convert />)} />
+      <Route path="/currencies" element={protect(<Currencies />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
