@@ -3,8 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 const link = ({ isActive }) =>
     `px-3 py-2 font-medium transition-colors ${
         isActive
-            ? 'text-blue-500 border-b-2 border-blue-500'
-            : 'text-blue-100 border-b-2 border-transparent hover:text-blue-400'
+            ? 'text-white border-b-2 border-[#FB923C]'
+            : 'text-blue-100 border-b-2 border-transparent hover:text-white'
     }`;
 
 export default function Navbar({ onLogout }) {
@@ -20,7 +20,7 @@ export default function Navbar({ onLogout }) {
       <NavLink to="/currencies" className={link}>Currencies</NavLink>
       <NavLink to="/favourites" className={link}>Favourites</NavLink>
       <span className="flex-1" />
-      <button onClick={logout} className="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition-colors hover:bg-blue-500">
+      <button onClick={logout} className="rounded-lg bg-[#FB923C] px-5 py-2 font-semibold text-[#02022b] transition-colors hover:bg-orange-300">
         Log out
       </button>
     </nav>
