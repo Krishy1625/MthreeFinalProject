@@ -5,6 +5,10 @@ public class Favourite {
     private int userId;
     private int fromCurrencyId;
     private int toCurrencyId;
+    private String fromCurrencyCode;
+    private String toCurrencyCode;
+    private String fromCurrencyName;
+    private String toCurrencyName;
 
     public int getFavId() {
         return favId;
@@ -36,5 +40,37 @@ public class Favourite {
 
     public void setToCurrencyId(int toCurrencyId) {
         this.toCurrencyId = toCurrencyId;
+    }
+
+    public String getFromCurrencyCode() {
+        return fromCurrencyCode;
+    }
+
+    public void setFromCurrencyCode(String fromCurrencyCode) {
+        this.fromCurrencyCode = fromCurrencyCode;
+    }
+
+    public String getToCurrencyCode() {
+        return toCurrencyCode;
+    }
+
+    public void setToCurrencyCode(String toCurrencyCode) {
+        this.toCurrencyCode = toCurrencyCode;
+    }
+
+    public String getFromCurrencyName() {
+        return fromCurrencyName;
+    }
+
+    public void setFromCurrencyName(String fromCurrencyName) {
+        this.fromCurrencyName = fromCurrencyName;
+    }
+
+    public String getToCurrencyName() {
+        return toCurrencyName;
+    }
+
+    public void setToCurrencyName(String toCurrencyName) {
+        this.toCurrencyName = toCurrencyName;
     }
 }

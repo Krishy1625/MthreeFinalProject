@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import FavouritePairs from '../components/FavouritePairs.jsx';
 
 const field = 'w-full border-2 border-gray-400 bg-white p-2.5 disabled:bg-gray-100';
 const label = 'mb-1 block text-sm text-gray-500';
@@ -15,7 +16,7 @@ async function getErrorMessage(response) {
   }
 }
 
-export default function Convert() {
+export default function Convert({ user }) {
   const [currencies, setCurrencies] = useState([]);
   const [amount, setAmount] = useState('100');
   const [from, setFrom] = useState('');
@@ -90,85 +91,97 @@ export default function Convert() {
   const isDisabled = isLoadingCurrencies || currencies.length === 0 || isConverting;
 
   return (
-    <section className="border-2 border-gray-400 p-5">
-      <h1 className="mb-3.5 text-lg font-semibold">Currency converter</h1>
-      {isLoadingCurrencies ? (
-        <p role="status">Loading currencies...</p>
-      ) : (
-        <form onSubmit={convert}>
-          <div className="flex flex-wrap gap-3">
-            <div className="min-w-36 flex-1">
-              <label htmlFor="amount" className={label}>Amount</label>
-              <input
-                id="amount"
-                type="number"
-                min="0"
-                step="any"
-                required
-                className={field}
-                value={amount}
-                onChange={event => setAmount(event.target.value)}
-              />
+    <>
+      <section className="border-2 border-gray-400 p-5">
+        <h1 className="mb-3.5 text-lg font-semibold">Currency converter</h1>
+        {isLoadingCurrencies ? (
+          <p role="status">Loading currencies...</p>
+        ) : (
+          <form onSubmit={convert}>
+            <div className="flex flex-wrap gap-3">
+              <div className="min-w-36 flex-1">
+                <label htmlFor="amount" className={label}>Amount</label>
+                <input
+                  id="amount"
+                  type="number"
+                  min="0"
+                  step="any"
+                  required
+                  className={field}
+                  value={amount}
+                  onChange={event => setAmount(event.target.value)}
+                />
+              </div>
+              <div className="min-w-36 flex-1">
+                <label htmlFor="from" className={label}>From</label>
+                <select
+                  id="from"
+                  className={field}
+                  value={from}
+                  onChange={event => setFrom(event.target.value)}
+                  disabled={isDisabled}
+                  required
+                >
+                  {currencies.map(currency => (
+                    <option key={currency.currencyCode} value={currency.currencyCode}>
+                      {currency.currencyCode} - {currency.currencyName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="min-w-36 flex-1">
+                <label htmlFor="to" className={label}>To</label>
+                <select
+                  id="to"
+                  className={field}
+                  value={to}
+                  onChange={event => setTo(event.target.value)}
+                  disabled={isDisabled}
+                  required
+                >
+                  {currencies.map(currency => (
+                    <option key={currency.currencyCode} value={currency.currencyCode}>
+                      {currency.currencyCode} - {currency.currencyName}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="min-w-36 flex-1">
-              <label htmlFor="from" className={label}>From</label>
-              <select
-                id="from"
-                className={field}
-                value={from}
-                onChange={event => setFrom(event.target.value)}
-                disabled={isDisabled}
-                required
-              >
-                {currencies.map(currency => (
-                  <option key={currency.currencyCode} value={currency.currencyCode}>
-                    {currency.currencyCode} - {currency.currencyName}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="min-w-36 flex-1">
-              <label htmlFor="to" className={label}>To</label>
-              <select
-                id="to"
-                className={field}
-                value={to}
-                onChange={event => setTo(event.target.value)}
-                disabled={isDisabled}
-                required
-              >
-                {currencies.map(currency => (
-                  <option key={currency.currencyCode} value={currency.currencyCode}>
-                    {currency.currencyCode} - {currency.currencyName}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
+            <button
+              type="submit"
+              disabled={isDisabled}
+              className="mt-4 bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700 disabled:opacity-60"
+            >
+              {isConverting ? 'Converting...' : 'Convert'}
+            </button>
+          </form>
+        )}
+        {!isLoadingCurrencies && currencies.length === 0 && !error && (
+          <p role="alert" className="text-red-700">No currencies are available.</p>
+        )}
+        {result && (
+          <div className="mt-4" aria-live="polite">
+            <p className="text-2xl font-bold">
+              {Number(result.convertedAmount).toFixed(2)} {result.toCurrency}
+            </p>
+            <p className="text-sm text-gray-500">
+              {result.amount} {result.fromCurrency} = {Number(result.convertedAmount).toFixed(2)} {result.toCurrency}
+              {' '}(rate: {Number(result.exchangeRate).toFixed(5)})
+            </p>
           </div>
-          {error && <p role="alert" className="mt-4 text-sm text-red-700">{error}</p>}
-          <button
-            type="submit"
-            disabled={isDisabled}
-            className="mt-4 bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700 disabled:opacity-60"
-          >
-            {isConverting ? 'Converting...' : 'Convert'}
-          </button>
-        </form>
-      )}
-      {!isLoadingCurrencies && currencies.length === 0 && !error && (
-        <p role="alert" className="text-red-700">No currencies are available.</p>
-      )}
-      {result && (
-        <div className="mt-4" aria-live="polite">
-          <p className="text-2xl font-bold">
-            {Number(result.convertedAmount).toFixed(2)} {result.toCurrency}
-          </p>
-          <p className="text-sm text-gray-500">
-            {result.amount} {result.fromCurrency} = {Number(result.convertedAmount).toFixed(2)} {result.toCurrency}
-            {' '}(rate: {Number(result.exchangeRate).toFixed(5)})
-          </p>
-        </div>
-      )}
-    </section>
+        )}
+      </section>
+      <FavouritePairs
+        userId={user.userId}
+        currentPair={{ from, to }}
+        onUsePair={(fromCode, toCode) => {
+          setFrom(fromCode);
+          setTo(toCode);
+          setResult(null);
+          setError('');
+        }}
+      />
+    </>
   );
 }
