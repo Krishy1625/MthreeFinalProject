@@ -32,18 +32,31 @@ public class FavouriteController {
         } catch (DuplicateKeyException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("This currency pair is already a favourite.");
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(exception.getMessage());
         }
     }
 
     @DeleteMapping("/{favouriteId}")
-    public ResponseEntity<Void> deleteFavourite(@PathVariable int favouriteId) {
-        favouriteService.deleteFavourite(favouriteId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteFavourite(@PathVariable int favouriteId) {
+        try {
+            favouriteService.deleteFavourite(favouriteId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(exception.getMessage());
+        }
     }
 
     @PutMapping
-    public ResponseEntity<Favourite> editFavourite(@RequestBody Favourite favourite) {
-        Favourite updatedFavourite = favouriteService.editFavourite(favourite);
-        return ResponseEntity.ok(updatedFavourite);
+    public ResponseEntity<?> editFavourite(@RequestBody Favourite favourite) {
+        try {
+            Favourite updatedFavourite = favouriteService.editFavourite(favourite);
+            return ResponseEntity.ok(updatedFavourite);
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(exception.getMessage());
+        }
     }
 }

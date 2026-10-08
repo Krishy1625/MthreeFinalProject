@@ -6,7 +6,6 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,61 +14,52 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        String username = request.getUsername().trim();
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return ResponseEntity.badRequest().body(new ApiError("Passwords do not match."));
-        }
-        if (request.getPassword().getBytes(StandardCharsets.UTF_8).length > 72) {
-            return ResponseEntity.badRequest().body(new ApiError("Password must be no more than 72 bytes."));
-        }
-
-        if (userExistsByUsername(username)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ApiError("That username is already in use."));
-        }
-
-        User user = new User();
-        user.setUsername(username);
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         try {
-            user = userService.addUser(user);
+            User user = userService.registerUser(
+                    request.getUsername(),
+                    request.getPassword(),
+                    request.getConfirmPassword()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
+
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiError(exception.getMessage()));
+
         } catch (DuplicateKeyException exception) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ApiError("That username is already in use."));
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        User user;
         try {
-            user = userService.findUserByUsername(request.getUsername().trim());
-        } catch (EmptyResultDataAccessException exception) {
-            return invalidCredentials();
-        }
+            User user = userService.loginUser(
+                    request.getUsername(),
+                    request.getPassword()
+            );
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            return invalidCredentials();
+            return ResponseEntity.ok(toResponse(user));
+
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiError("Invalid username or password."));
         }
-        return ResponseEntity.ok(toResponse(user));
     }
 
     private boolean userExistsByUsername(String username) {

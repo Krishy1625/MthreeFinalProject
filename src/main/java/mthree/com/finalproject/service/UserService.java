@@ -8,4 +8,8 @@ public interface UserService {
     User findUserById(int userId);
 
     User findUserByUsername(String username);
+
+    User registerUser(String username, String password, String confirmPassword);
+
+    User loginUser(String username, String password);
 }

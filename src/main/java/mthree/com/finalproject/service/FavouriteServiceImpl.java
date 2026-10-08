@@ -21,16 +21,41 @@ public class FavouriteServiceImpl implements FavouriteService {
 
     @Override
     public Favourite addFavourite(Favourite favourite) {
+        if (favourite == null) {
+            throw new IllegalArgumentException("Favourite details are required.");
+        }
+
+        if (favourite.getUserId() <= 0
+                || favourite.getFromCurrencyId() <= 0
+                || favourite.getToCurrencyId() <= 0) {
+            throw new IllegalArgumentException("Valid user and currency IDs are required.");
+        }
+
         return favouriteDao.addFavourite(favourite);
     }
 
     @Override
     public Favourite editFavourite(Favourite favourite) {
+        if (favourite == null) {
+            throw new IllegalArgumentException("Favourite details are required.");
+        }
+
+        if (favourite.getFavId() <= 0
+                || favourite.getUserId() <= 0
+                || favourite.getFromCurrencyId() <= 0
+                || favourite.getToCurrencyId() <= 0) {
+            throw new IllegalArgumentException("Valid favourite, user and currency IDs are required.");
+        }
+
         return favouriteDao.editFavourite(favourite);
     }
 
     @Override
     public void deleteFavourite(int favouriteId) {
+        if (favouriteId <= 0) {
+            throw new IllegalArgumentException("A valid favourite ID is required.");
+        }
+
         favouriteDao.deleteFavourite(favouriteId);
     }
 }

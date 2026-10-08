@@ -26,12 +26,14 @@ public class CurrencyController {
 
     @GetMapping("/{code}")
     public ResponseEntity<?> getCurrencyByCode(@PathVariable String code) {
-        try{
+        try {
             Currency currency = currencyService.findCurrencyByCode(code);
             return ResponseEntity.ok(currency);
-        }
-        catch (EmptyResultDataAccessException exception){
+        } catch (EmptyResultDataAccessException exception) {
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest()
+                    .body(exception.getMessage());
         }
     }
 

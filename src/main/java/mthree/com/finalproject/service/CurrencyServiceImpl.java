@@ -37,7 +37,11 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Currency findCurrencyByCode(String code) {
-        return currencyDao.findCurrencyByCode(code.toUpperCase());
+        if (code == null || code.isBlank()) {
+            throw new IllegalArgumentException("Currency code is required.");
+        }
+
+        return currencyDao.findCurrencyByCode(code.trim().toUpperCase());
     }
 
     @Override
@@ -49,8 +53,13 @@ public class CurrencyServiceImpl implements CurrencyService {
             throw new IllegalArgumentException("Amount must be greater than zero.");
         }
 
-        String from = fromCurrency.toUpperCase();
-        String to = toCurrency.toUpperCase();
+        if (fromCurrency == null || fromCurrency.isBlank()
+                || toCurrency == null || toCurrency.isBlank()) {
+            throw new IllegalArgumentException("Both currency codes are required.");
+        }
+
+        String from = fromCurrency.trim().toUpperCase();
+        String to = toCurrency.trim().toUpperCase();
 
         String url = apiUrl
                 + "?api_key=" + apiKey
