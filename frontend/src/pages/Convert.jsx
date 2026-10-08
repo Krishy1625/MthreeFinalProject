@@ -240,72 +240,72 @@ export default function Convert({ user }) {
                   </p>
                 </div>
             )}
-            {showNotesDialog && (
-                <div
-                    className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
-                    role="presentation"
-                    onMouseDown={event => {
-                      if (event.target === event.currentTarget && !isConverting) {
-                        setShowNotesDialog(false);
-                      }
-                    }}
-                >
-                  <section
-                      role="dialog"
-                      aria-modal="true"
-                      aria-labelledby="conversion-notes-title"
-                      className="w-full max-w-md rounded-2xl border border-white/30 bg-[#172554] p-6 shadow-2xl"
-                  >
-                    <div className="mb-4 h-[3px] w-12 rounded-full bg-[#FB923C]"/>
-
-                    <h2 id="conversion-notes-title" className="mb-2 text-xl font-bold text-white">
-                      Add a note
-                    </h2>
-
-                    <p className="mb-5 text-sm text-blue-100">
-                      Add an optional note to this conversion before saving it to history.
-                    </p>
-                    <form onSubmit={convert}>
-                      <label htmlFor="conversion-notes" className={label}>Note (optional)</label>
-                      <textarea
-                          id="conversion-notes"
-                          maxLength={255}
-                          rows={3}
-                          className={field}
-                          value={notes}
-                          onChange={event => setNotes(event.target.value)}
-                          disabled={isConverting}
-                      />
-                      <p className="mt-1 text-right text-xs text-blue-200">{notes.length}/255</p>
-
-                      {error && (
-                          <p role="alert" className="mt-3 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">
-                            {error}
-                          </p>
-                      )}
-                      <div className="mt-4 flex justify-end gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setShowNotesDialog(false)}
-                            disabled={isConverting}
-                            className="rounded-lg bg-[#1E3A8A] px-4 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60rounded-lg border border-white/30 px-4 py-2 font-medium text-blue-100 transition hover:bg-white/10 disabled:opacity-60"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isConverting}
-                            className="bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-60"
-                        >
-                          {isConverting ? 'Converting...' : 'Convert and save'}
-                        </button>
-                      </div>
-                    </form>
-                  </section>
-                </div>
-            )}
           </div>
         </section>
+        {showNotesDialog && (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm"
+                role="presentation"
+                onMouseDown={event => {
+                  if (event.target === event.currentTarget && !isConverting) {
+                    setShowNotesDialog(false);
+                  }
+                }}
+            >
+              <section
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="conversion-notes-title"
+                  className="my-auto w-full max-w-md rounded-2xl border border-white/30 bg-[#172554] p-6 shadow-2xl"
+              >
+                <div className="mb-4 h-[3px] w-12 rounded-full bg-[#FB923C]"/>
+
+                <h2 id="conversion-notes-title" className="mb-2 text-xl font-bold text-white">
+                  Add a note
+                </h2>
+
+                <p className="mb-5 text-sm text-blue-100">
+                  Add an optional note to this conversion before saving it to history.
+                </p>
+                <form onSubmit={convert}>
+                  <label htmlFor="conversion-notes" className={label}>Note (optional)</label>
+                  <textarea
+                      id="conversion-notes"
+                      maxLength={255}
+                      rows={3}
+                      className={field}
+                      value={notes}
+                      onChange={event => setNotes(event.target.value)}
+                      disabled={isConverting}
+                  />
+                  <p className="mt-1 text-right text-xs text-blue-200">{notes.length}/255</p>
+
+                  {error && (
+                      <p role="alert" className="mt-3 rounded-lg bg-red-500/10 p-3 text-sm text-red-200">
+                        {error}
+                      </p>
+                  )}
+                  <div className="mt-4 flex flex-col-reverse justify-end gap-3 sm:flex-row">
+                    <button
+                        type="button"
+                        onClick={() => setShowNotesDialog(false)}
+                        disabled={isConverting}
+                        className="rounded-lg border border-white/30 px-4 py-2 font-medium text-blue-100 transition hover:bg-white/10 disabled:opacity-60"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isConverting}
+                        className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+                    >
+                      {isConverting ? 'Converting...' : 'Convert and save'}
+                    </button>
+                  </div>
+                </form>
+              </section>
+            </div>
+        )}
         <FavouritePairs
             userId={user.userId}
             currentPair={{
