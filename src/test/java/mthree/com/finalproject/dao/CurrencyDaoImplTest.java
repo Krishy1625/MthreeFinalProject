@@ -1,32 +1,57 @@
 package mthree.com.finalproject.dao;
 
 import mthree.com.finalproject.model.Currency;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
-@SpringBootTest
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class CurrencyDaoImplTest {
 
-    @Autowired
-    private CurrencyDao currencyDao;
+    @Mock
+    private JdbcTemplate jdbcTemplate;
 
-    @Test
-    void getAllCurrencies() {
-        List<Currency> currencies = currencyDao.getAllCurrencies();
+    private CurrencyDaoImpl currencyDao;
 
-        assertEquals(4, currencies.size());
+    @BeforeEach
+    void setUp() {
+        currencyDao = new CurrencyDaoImpl(jdbcTemplate);
     }
 
     @Test
-    void findCurrencyByCode() {
-        Currency currency = currencyDao.findCurrencyByCode("GBP");
+    void getAllCurrenciesReturnsQueryResults() {
+        List<Currency> expected = List.of(new Currency());
+        when(jdbcTemplate.query(any(String.class), any(RowMapper.class))).thenReturn(expected);
 
-        assertNotNull(currency);
-        assertEquals("GBP", currency.getCurrencyCode());
-        assertEquals("British Pound", currency.getCurrencyName());
-        assertEquals("£", currency.getCurrencySymbol());
+        List<Currency> result = currencyDao.getAllCurrencies();
+
+        assertSame(expected, result);
+        verify(jdbcTemplate).query(eq("SELECT * FROM currency ORDER BY cid"), any(RowMapper.class));
+    }
+
+    @Test
+    void findCurrencyByCodeQueriesForCurrencyCode() {
+        Currency expected = new Currency();
+        when(jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), eq("GBP")))
+                .thenReturn(expected);
+
+        Currency result = currencyDao.findCurrencyByCode("GBP");
+
+        assertSame(expected, result);
+        verify(jdbcTemplate).queryForObject(
+                eq("SELECT * FROM currency WHERE currency_code = ?"), any(RowMapper.class), eq("GBP")
+        );
     }
 }
