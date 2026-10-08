@@ -3,95 +3,62 @@ package mthree.com.finalproject.dao;
 import mthree.com.finalproject.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.KeyHolder;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.util.List;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class UserDaoImplTest {
 
-    @Mock
-    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private UserDao userDao;
 
-    private UserDaoImpl userDao;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUp() {
-        userDao = new UserDaoImpl(jdbcTemplate);
+        jdbcTemplate.update("DELETE FROM users WHERE username = ?", "testuser3");
     }
 
     @Test
-    void addUserInsertsUserAndSetsGeneratedId() throws Exception {
-        User user = new User();
-        user.setUsername("alice");
-        user.setPasswordHash("hashed-password");
+    void addUser() {
+        User newUser = new User();
+        newUser.setUsername("testuser3");
+        newUser.setPasswordHash("hashedpassword3");
 
-        Connection connection = mock(Connection.class);
-        PreparedStatement statement = mock(PreparedStatement.class);
-        when(connection.prepareStatement(
-                "INSERT INTO users(username, password_hash) VALUES(?,?)",
-                Statement.RETURN_GENERATED_KEYS
-        )).thenReturn(statement);
-        doAnswer(invocation -> {
-            PreparedStatementCreator creator = invocation.getArgument(0);
-            KeyHolder keyHolder = invocation.getArgument(1);
-            keyHolder.getKeyList().add(Map.of("uid", 42));
-            creator.createPreparedStatement(connection);
-            return 1;
-        }).when(jdbcTemplate).update(any(PreparedStatementCreator.class), any(KeyHolder.class));
+        User addedUser = userDao.addUser(newUser);
 
-        User result = userDao.addUser(user);
+        User savedUser = userDao.findUserByUsername("testuser3");
 
-        assertSame(user, result);
-        assertEquals(42, user.getUserId());
-        verify(statement).setString(1, "alice");
-        verify(statement).setString(2, "hashed-password");
+        assertTrue(addedUser.getUserId() > 0);
+        assertEquals(savedUser.getUserId(), addedUser.getUserId());
+        assertNotNull(savedUser);
+        assertEquals("testuser3", savedUser.getUsername());
+        assertEquals("hashedpassword3", savedUser.getPasswordHash());
     }
 
     @Test
-    void findUserByIdQueriesById() {
-        User expected = new User();
-        when(jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), eq(2)))
-                .thenReturn(expected);
+    void findUserById() {
+        User user = userDao.findUserById(2);
 
-        User result = userDao.findUserById(2);
+        assertThrows(Exception.class, () -> {userDao.findUserById(99999);});
 
-        assertSame(expected, result);
-        verify(jdbcTemplate).queryForObject(
-                eq("SELECT * FROM users WHERE uid = ?"), any(RowMapper.class), eq(2)
-        );
+        assertNotNull(user);
+        assertEquals("testuser2", user.getUsername());
+        assertEquals("hashedpassword2", user.getPasswordHash());
     }
 
     @Test
-    void findUserByUsernameQueriesByUsername() {
-        User expected = new User();
-        when(jdbcTemplate.queryForObject(any(String.class), any(RowMapper.class), eq("alice")))
-                .thenReturn(expected);
+    void findUserByUsername() {
+        User user = userDao.findUserByUsername("testuser1");
 
-        User result = userDao.findUserByUsername("alice");
+        assertThrows(Exception.class, () -> {userDao.findUserByUsername("m");});
 
-        assertSame(expected, result);
-        verify(jdbcTemplate).queryForObject(
-                eq("SELECT * FROM users WHERE username = ?"), any(RowMapper.class), eq("alice")
-        );
+        assertNotNull(user);
+        assertEquals("testuser1", user.getUsername());
+        assertEquals("hashedpassword1", user.getPasswordHash());
     }
 }

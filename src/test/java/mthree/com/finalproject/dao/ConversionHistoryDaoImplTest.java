@@ -3,38 +3,71 @@ package mthree.com.finalproject.dao;
 import mthree.com.finalproject.model.ConversionHistory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class ConversionHistoryDaoImplTest {
 
-    @Mock
-    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private ConversionHistoryDao historyDao;
 
-    private ConversionHistoryDaoImpl historyDao;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUp() {
-        historyDao = new ConversionHistoryDaoImpl(jdbcTemplate);
+        jdbcTemplate.update("DELETE FROM conversion_history");
+
+        jdbcTemplate.update(
+                "INSERT INTO conversion_history " +
+                        "(user_id, from_currency_id, to_currency_id, amount, exchange_rate, " +
+                        "converted_amount, conversion_date, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                1, 1, 2,
+                new BigDecimal("100.00"),
+                new BigDecimal("1.15000"),
+                new BigDecimal("115.00"),
+                LocalDateTime.parse("2026-10-01T10:00:00"),
+                "Holiday"
+        );
+
+        jdbcTemplate.update(
+                "INSERT INTO conversion_history " +
+                        "(user_id, from_currency_id, to_currency_id, amount, exchange_rate, " +
+                        "converted_amount, conversion_date, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                1, 1, 3,
+                new BigDecimal("50.00"),
+                new BigDecimal("1.34000"),
+                new BigDecimal("67.00"),
+                LocalDateTime.parse("2026-10-02T12:00:00"),
+                null
+        );
+
+        jdbcTemplate.update(
+                "INSERT INTO conversion_history " +
+                        "(user_id, from_currency_id, to_currency_id, amount, exchange_rate, " +
+                        "converted_amount, conversion_date, notes) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                2, 3, 4,
+                new BigDecimal("100.00"),
+                new BigDecimal("150.00000"),
+                new BigDecimal("15000.00"),
+                LocalDateTime.parse("2026-10-02T14:00:00"),
+                "Test conversion"
+        );
     }
 
     @Test
-    void addHistoryInsertsConversionAndReturnsIt() {
+    void addHistory() {
         ConversionHistory history = new ConversionHistory();
         history.setUserId(1);
         history.setFromCurrencyId(3);
@@ -45,38 +78,45 @@ class ConversionHistoryDaoImplTest {
         history.setDate(LocalDateTime.parse("2026-10-02T12:00:00"));
         history.setNotes("Unit test");
 
-        ConversionHistory result = historyDao.addHistory(history);
+        ConversionHistory added = historyDao.addHistory(history);
 
-        assertSame(history, result);
-        verify(jdbcTemplate).update(
-                "INSERT INTO conversion_history(user_id, from_currency_id, to_currency_id, amount, exchange_rate, converted_amount, conversion_date, notes) VALUES(?,?,?,?,?,?,?,?)",
-                1, 3, 2, new BigDecimal("150.00"), new BigDecimal("1.23451"),
-                new BigDecimal("185.18"), history.getDate(), "Unit test"
-        );
+        List<ConversionHistory> histories = historyDao.getHistoryByUserId(1);
+        assertEquals(3, histories.size());
+
+        assertNotNull(added);
+        assertEquals(1, added.getUserId());
+        assertEquals(3, added.getFromCurrencyId());
+        assertEquals(2, added.getToCurrencyId());
+        assertEquals(new BigDecimal("150.00"), added.getAmount());
+        assertEquals(new BigDecimal("1.23451"), added.getExchangeRate());
+        assertEquals(new BigDecimal("185.18"), added.getConvertedAmount());
+        assertEquals(LocalDateTime.parse("2026-10-02T12:00:00"), added.getDate());
+        assertEquals("Unit test", added.getNotes());
     }
 
     @Test
-    void getHistoryByUserIdQueriesForThatUser() {
-        List<ConversionHistory> expected = List.of(new ConversionHistory());
-        when(jdbcTemplate.query(any(String.class), any(RowMapper.class), eq(1))).thenReturn(expected);
-
-        List<ConversionHistory> result = historyDao.getHistoryByUserId(1);
-
-        assertSame(expected, result);
-        verify(jdbcTemplate).query(any(String.class), any(RowMapper.class), eq(1));
+    void getHistoryByUserId() {
+        List<ConversionHistory> histories = historyDao.getHistoryByUserId(1);
+        assertEquals(2, histories.size());
     }
 
     @Test
-    void deleteHistoryDeletesByHistoryId() {
-        historyDao.deleteHistory(12);
+    void deleteHistory() {
+        List<ConversionHistory> histories = historyDao.getHistoryByUserId(1);
 
-        verify(jdbcTemplate).update("DELETE FROM conversion_history WHERE hid = ?", 12);
+        int historyId = histories.get(0).getHistoryId();
+        historyDao.deleteHistory(historyId);
+        histories = historyDao.getHistoryByUserId(1);
+
+        assertEquals(1, histories.size());
     }
 
     @Test
-    void deleteAllHistoryDeletesByUserId() {
-        historyDao.deleteAllHistory(7);
+    void deleteAllHistory() {
+        historyDao.deleteAllHistory(2);
 
-        verify(jdbcTemplate).update("DELETE FROM conversion_history WHERE user_id = ?", 7);
+        List<ConversionHistory> histories = historyDao.getHistoryByUserId(2);
+
+        assertEquals(0, histories.size());
     }
 }
