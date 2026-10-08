@@ -104,40 +104,54 @@ export default function FavouritePairs({
   };
 
   return (
-    <section className="mt-6 border-2 border-gray-400 p-5">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        {currentPair?.from && currentPair?.to && (
-          <button
-            type="button"
-            onClick={saveFavourite}
-            disabled={isSaving || isLoading || pairIsSaved}
-            className="bg-amber-500 px-4 py-2 font-semibold hover:bg-amber-400 disabled:opacity-60"
-          >
-            {isSaving
-              ? 'Saving...'
-              : pairIsSaved
-                ? `${currentPair.from} / ${currentPair.to} already saved`
-                : `Save ${currentPair.from} / ${currentPair.to}`}
-          </button>
-        )}
-      </div>
+      <section className="mt-10">
+        <div className="mb-8">
+          <div className="mb-3 h-[3px] w-12 rounded-full bg-[#FB923C]" />
 
-      {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
-      {message && <p role="status" className="mb-3 text-sm text-green-700">{message}</p>}
-      {isLoading ? (
-        <p role="status">Loading favourite pairs...</p>
-      ) : favourites.length === 0 ? (
-        <p className="text-sm text-gray-600">You have no favourite currency pairs yet.</p>
-      ) : (
-        <ul className="divide-y divide-gray-200">
-          {favourites.map(favourite => (
-            <li key={favourite.favId} className="flex flex-wrap items-center justify-between gap-3 py-3">
+          <h2 className="text-3xl font-bold text-[#02022b]">
+            {title}
+          </h2>
+
+          <p className="mt-2 text-sm font-medium text-[#24244f]">
+            Save and manage your favourite currency pairs.
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/50 bg-[#172554]/75 p-6 shadow-xl backdrop-blur-md">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            {currentPair?.from && currentPair?.to && (
+              <button
+                  type="button"
+                  onClick={saveFavourite}
+                  disabled={isSaving || isLoading || pairIsSaved}
+                  className="rounded-lg border border-[#FB923C]/40 bg-[#FB923C]/15 px-5 py-2.5 font-semibold text-[#FB923C] transition hover:bg-[#FB923C]/25 disabled:opacity-60"
+              >
+                {isSaving
+                    ? 'Saving...'
+                    : pairIsSaved
+                        ? `${currentPair.from} / ${currentPair.to} already saved`
+                        : `Save ${currentPair.from} / ${currentPair.to}`}
+              </button>
+          )}
+          </div>
+
+          {error && <p role="alert" className="mb-4 rounded-lg bg-red-500/10 p-4 text-sm text-red-200">{error}</p>}
+          {message && <p role="status" className="mb-4 rounded-lg bg-green-500/10 p-4 text-sm text-green-200">{message}</p>}
+          {isLoading ? (
+              <p role="status" className="py-6 text-center text-blue-100">
+                Loading favourite pairs...
+              </p>
+          ) : favourites.length === 0 ? (
+              <p className="rounded-xl border border-white/15 bg-[#1E3A8A]/55 p-6 text-center text-sm text-blue-100">You have no favourite currency pairs yet.</p>
+          ) : (
+              <ul className="space-y-3">
+                {favourites.map(favourite => (
+                    <li key={favourite.favId} className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-white/15 bg-[#1E3A8A]/55 p-4">
               <div>
-                <p className="font-medium">
+                <p className="text-lg font-bold text-white">
                   {favourite.fromCurrencyCode} / {favourite.toCurrencyCode}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="mt-1 text-sm text-blue-100">
                   {favourite.fromCurrencyName} to {favourite.toCurrencyName}
                 </p>
               </div>
@@ -146,7 +160,7 @@ export default function FavouritePairs({
                   <button
                     type="button"
                     onClick={() => onUsePair(favourite.fromCurrencyCode, favourite.toCurrencyCode)}
-                    className="border border-blue-600 px-3 py-1.5 text-blue-700 hover:bg-blue-50"
+                    className="rounded-lg border border-blue-300/40 bg-blue-400/10 px-4 py-2 font-medium text-blue-100 transition hover:bg-blue-400/20"
                   >
                     Use pair
                   </button>
@@ -155,7 +169,7 @@ export default function FavouritePairs({
                   type="button"
                   onClick={() => removeFavourite(favourite.favId)}
                   disabled={removingId === favourite.favId}
-                  className="border border-red-600 px-3 py-1.5 text-red-700 hover:bg-red-50 disabled:opacity-60"
+                  className="rounded-lg border border-red-400/40 bg-red-500/10 px-4 py-2 font-medium text-red-200 transition hover:bg-red-500/20 disabled:opacity-60"
                 >
                   {removingId === favourite.favId ? 'Removing...' : 'Remove'}
                 </button>
@@ -164,6 +178,7 @@ export default function FavouritePairs({
           ))}
         </ul>
       )}
+        </div>
     </section>
   );
 }
