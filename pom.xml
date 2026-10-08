@@ -53,13 +53,6 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-        <!-- H2 for database tests -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Testing -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
